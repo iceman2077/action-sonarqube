@@ -11408,8 +11408,7 @@ class Sonarqube {
                 console.log(certificate);
                 var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
                 console.log(store);
-                const SonarCert = store.importcert('imported-fromstdin', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
-                    console.log(SonarCert);
+                store.importcert('imported-fromstdin', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
                     if (err) {
                         console.log(err);
                         return err;
