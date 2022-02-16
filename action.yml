@@ -1,0 +1,39 @@
+name: 'Action SonarQube'
+description: 'Scan code using Sonarqube and show issues in pull requests.'
+inputs:
+  host:
+    description: "SonarQube Server URL"
+    required: true
+  token:
+    description: "Sonarqube token"
+    required: true
+  projectKey:
+    description: "Sonarqube project key. The default key will be 'owner-repository'."
+    required: false
+    default: ""
+  projectName:
+    description: "Sonarqube project name. The default name will be 'owner-repository'."
+    required: false
+    default: ""
+  projectBaseDir:
+    description: "Sonar project base dir. "
+    required: false
+    default: "."
+  githubToken:
+    description: "Github token. https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret"
+    required: true
+  lintReport:
+    description: "Path to lint report json file. https://docs.sonarqube.org/pages/viewpage.action?pageId=11639183"
+    required: false
+  golangciLintReport:
+    description: "Path to golangci-lint report xml file. https://docs.sonarqube.org/latest/analysis/external-issues/"
+    required: false
+  flags:
+    description: "Any Sonarqube flags which will following the end of the command"
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+branding:
+  icon: 'git-pull-request'
+  color: 'purple'
