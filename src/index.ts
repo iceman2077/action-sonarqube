@@ -122,7 +122,7 @@ const updateCheckRun = async ({
 async function run() {
   const { repo } = context
   const sonarqube = new Sonarqube(repo)
-
+  sonarqube.setSonarCert()
   const scannerCommand = sonarqube.getScannerCommand()
 
   await exec.exec(scannerCommand)
