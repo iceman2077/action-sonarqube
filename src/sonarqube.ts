@@ -134,9 +134,11 @@ export default class Sonarqube {
     var sslCertificate = require('get-ssl-certificate');
     var Keytool = require('node-keytool');
     var hostname = new URL(this.host).hostname;
+    console.log(hostname);
     const cert = sslCertificate.get(hostname).then(function (certificate) {
       return certificate;
     });
+    console.log(cert);
     var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
     const SonarCert = await store.importcert('imported-fromstdin', 'changeit', undefined, cert.pemEncoded, true, function (err, res) {
       if (err) {
@@ -145,6 +147,7 @@ export default class Sonarqube {
         return res;
       }
     });
+    console.log(SonarCert);
     return SonarCert;
   }
 

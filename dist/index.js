@@ -11403,9 +11403,11 @@ class Sonarqube {
             var sslCertificate = __nccwpck_require__(1309);
             var Keytool = __nccwpck_require__(2564);
             var hostname = new URL(this.host).hostname;
+            console.log(hostname);
             const cert = sslCertificate.get(hostname).then(function (certificate) {
                 return certificate;
             });
+            console.log(cert);
             var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
             const SonarCert = await store.importcert('imported-fromstdin', 'changeit', undefined, cert.pemEncoded, true, function (err, res) {
                 if (err) {
@@ -11415,6 +11417,7 @@ class Sonarqube {
                     return res;
                 }
             });
+            console.log(SonarCert);
             return SonarCert;
         };
         this.getScannerCommand = () => `sonar-scanner -Dsonar.projectKey=${this.project.projectKey} -Dsonar.projectName=${this.project.projectName} -Dsonar.sources=. -Dsonar.projectBaseDir=${this.project.projectBaseDir} -Dsonar.login=${this.token} -Dsonar.host.url=${this.host} ${this.project.lintReport
