@@ -133,7 +133,8 @@ export default class Sonarqube {
   public setSonarCert = async (): Promise<SonarCert | null> => {
     var sslCertificate = require('get-ssl-certificate');
     var Keytool = require('node-keytool');
-    const cert = sslCertificate.get(this.host).then(function (certificate) {
+    var hostname = new URL(this.host).hostname;
+    const cert = sslCertificate.get(hostname).then(function (certificate) {
       return certificate;
     });
     var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });

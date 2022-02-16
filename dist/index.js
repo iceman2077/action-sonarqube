@@ -11402,7 +11402,8 @@ class Sonarqube {
         this.setSonarCert = async () => {
             var sslCertificate = __nccwpck_require__(1309);
             var Keytool = __nccwpck_require__(2564);
-            const cert = sslCertificate.get(this.host).then(function (certificate) {
+            var hostname = new URL(this.host).hostname;
+            const cert = sslCertificate.get(hostname).then(function (certificate) {
                 return certificate;
             });
             var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
