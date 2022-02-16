@@ -135,12 +135,12 @@ export default class Sonarqube {
     var Keytool = require('node-keytool');
     var hostname = new URL(this.host).hostname;
     console.log(hostname);
-    const cert = sslCertificate.get(hostname).then(function (certificate) {
-      return certificate;
-    });
-    console.log(cert);
-    var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
-    const SonarCert = store.importcert('imported-fromstdin', 'changeit', undefined, cert.pemEncoded, true, function (err, res) {
+    sslCertificate.get(hostname).then(function (certificate) {
+      console.log(certificate);
+      var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
+      console.log(store);
+      const SonarCert = store.importcert('imported-fromstdin', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
+      console.log(SonarCert);
       if (err) {
         console.log(err);
         return err;
@@ -148,8 +148,9 @@ export default class Sonarqube {
         console.log(res);
         return res;
       }
+      });
     });
-    console.log(SonarCert);
+    const SonarCert = null
     return SonarCert;
   }
 
