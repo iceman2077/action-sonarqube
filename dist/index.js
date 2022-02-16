@@ -11404,20 +11404,23 @@ class Sonarqube {
             var Keytool = __nccwpck_require__(2564);
             var hostname = new URL(this.host).hostname;
             console.log(hostname);
-            const cert = sslCertificate.get(hostname).then(function (certificate) {
-                return certificate;
+            sslCertificate.get(hostname).then(function (certificate) {
+                console.log(certificate);
+                var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
+                console.log(store);
+                const SonarCert = store.importcert('imported-fromstdin', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
+                    console.log(SonarCert);
+                    if (err) {
+                        console.log(err);
+                        return err;
+                    }
+                    else {
+                        console.log(res);
+                        return res;
+                    }
+                });
             });
-            console.log(cert);
-            var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
-            const SonarCert = store.importcert('imported-fromstdin', 'changeit', undefined, cert.pemEncoded, true, function (err, res) {
-                if (err) {
-                    return err;
-                }
-                else {
-                    return res;
-                }
-            });
-            console.log(SonarCert);
+            const SonarCert = null;
             return SonarCert;
         };
         this.getScannerCommand = () => `sonar-scanner -Dsonar.projectKey=${this.project.projectKey} -Dsonar.projectName=${this.project.projectName} -Dsonar.sources=. -Dsonar.projectBaseDir=${this.project.projectBaseDir} -Dsonar.login=${this.token} -Dsonar.host.url=${this.host} ${this.project.lintReport
