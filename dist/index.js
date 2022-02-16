@@ -11335,7 +11335,7 @@ const updateCheckRun = async ({ octokit, repo, checkRunId, annotations, summary,
 async function run() {
     const { repo } = github_1.context;
     const sonarqube = new sonarqube_1.default(repo);
-    sonarqube.setSonarCert();
+    await sonarqube.setSonarCert();
     const scannerCommand = sonarqube.getScannerCommand();
     await exec.exec(scannerCommand);
     // Wait for background tasks: https://docs.sonarqube.org/latest/analysis/background-tasks/
@@ -11399,22 +11399,22 @@ class Sonarqube {
                 throw new Error('Error getting project issues from SonarQube. Please make sure you provided the host and token inputs.');
             }
         };
-        this.setSonarCert = () => {
+        this.setSonarCert = async () => {
             var sslCertificate = __nccwpck_require__(1309);
             var Keytool = __nccwpck_require__(2564);
-            sslCertificate.get(this.host).then(function (certificate) {
-                console.log(certificate.pemEncoded);
-                var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
-                store.importcert('imported-fromstdin', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
-                    if (err) {
-                        console.log('Could not creatlse keystore. Reason: ' + err);
-                        return;
-                    }
-                    else {
-                        console.log(res);
-                    }
-                });
+            const cert = sslCertificate.get(this.host).then(function (certificate) {
+                return certificate;
             });
+            var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
+            const SonarCert = await store.importcert('imported-fromstdin', 'changeit', undefined, cert.pemEncoded, true, function (err, res) {
+                if (err) {
+                    return err;
+                }
+                else {
+                    return res;
+                }
+            });
+            return SonarCert;
         };
         this.getScannerCommand = () => `sonar-scanner -Dsonar.projectKey=${this.project.projectKey} -Dsonar.projectName=${this.project.projectName} -Dsonar.sources=. -Dsonar.projectBaseDir=${this.project.projectBaseDir} -Dsonar.login=${this.token} -Dsonar.host.url=${this.host} ${this.project.lintReport
             ? `-Dsonar.eslint.reportPaths=${this.project.lintReport}`

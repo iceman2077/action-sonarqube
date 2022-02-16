@@ -59,6 +59,10 @@ export interface ProjectStatus {
 export interface ProjectStatusResponseAPI {
   projectStatus: ProjectStatus
 }
+
+export interface SonarCert{
+  sonarCert: SonarCert
+}
 export default class Sonarqube {
   private http: AxiosInstance
   public host: string
@@ -126,22 +130,21 @@ export default class Sonarqube {
     }
   }
 
-  public setSonarCert = () => {
+  public setSonarCert = async (): Promise<SonarCert | null> => {
     var sslCertificate = require('get-ssl-certificate');
     var Keytool = require('node-keytool');
-    sslCertificate.get(this.host).then(function (certificate) {
-      console.log(certificate.pemEncoded);
-      var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
-      store.importcert('imported-fromstdin', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
-          if (err) {
-            console.log('Could not creatlse keystore. Reason: ' + err);
-            return;
-          }
-          else{
-            console.log(res);
-          }
-      });
+    const cert = sslCertificate.get(this.host).then(function (certificate) {
+      return certificate;
     });
+    var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
+    const SonarCert = await store.importcert('imported-fromstdin', 'changeit', undefined, cert.pemEncoded, true, function (err, res) {
+      if (err) {
+        return err;
+      } else {
+        return res;
+      }
+    });
+    return SonarCert;
   }
 
   public getScannerCommand = () =>
