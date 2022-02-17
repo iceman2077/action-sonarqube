@@ -1,6 +1,7 @@
 import type { AxiosInstance } from 'axios'
 import axios from 'axios'
 import { getInput } from '@actions/core'
+import * as exec from '@actions/exec'
 import 'get-ssl-certificate'
 import 'node-keytool'
 
@@ -130,7 +131,7 @@ export default class Sonarqube {
     }
   }
 
-  public setSonarCert = (do_after) => {
+  public setSonarCert = (sonarqube) => {
     var sslCertificate = require('get-ssl-certificate');
     var Keytool = require('node-keytool');
     var hostname = new URL(this.host).hostname;
@@ -147,8 +148,8 @@ export default class Sonarqube {
         } else {
           console.log(res);
           console.log('importcert (std)');
-          const execSync = require('child_process').execSync;
-          Promise.resolve(execSync(do_after));
+          const scannerCommand = sonarqube.getScannerCommand()
+          Promise.resolve(exec.exec(scannerCommand));
         }
       });
     });

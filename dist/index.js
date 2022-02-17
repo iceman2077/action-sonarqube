@@ -11371,12 +11371,32 @@ run();
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const axios_1 = __importDefault(__nccwpck_require__(6545));
 const core_1 = __nccwpck_require__(2186);
+const exec = __importStar(__nccwpck_require__(1514));
 __nccwpck_require__(1309);
 __nccwpck_require__(2564);
 class Sonarqube {
@@ -11398,7 +11418,7 @@ class Sonarqube {
                 throw new Error('Error getting project issues from SonarQube. Please make sure you provided the host and token inputs.');
             }
         };
-        this.setSonarCert = (do_after) => {
+        this.setSonarCert = (sonarqube) => {
             var sslCertificate = __nccwpck_require__(1309);
             var Keytool = __nccwpck_require__(2564);
             var hostname = new URL(this.host).hostname;
@@ -11416,8 +11436,8 @@ class Sonarqube {
                     else {
                         console.log(res);
                         console.log('importcert (std)');
-                        const execSync = __nccwpck_require__(3129).execSync;
-                        Promise.resolve(execSync(do_after));
+                        const scannerCommand = sonarqube.getScannerCommand();
+                        Promise.resolve(exec.exec(scannerCommand));
                     }
                 });
             });
