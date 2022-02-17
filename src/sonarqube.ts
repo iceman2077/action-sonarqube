@@ -1,7 +1,6 @@
 import type { AxiosInstance } from 'axios'
 import axios from 'axios'
 import { getInput } from '@actions/core'
-import * as exec from '@actions/exec'
 import 'get-ssl-certificate'
 import 'node-keytool'
 
@@ -105,54 +104,24 @@ export default class Sonarqube {
     status?: string
     result?: Array<[Issue]>
   }): Promise<Array<[Issue]>> => {
-    try {
-      const response = await this.http.get<IssuesResponseAPI>(
-        `/api/issues/search?componentKeys=${this.project.projectKey}&statuses=${status}&ps=${pageSize}&p=${page}`
-      )
+    const response = await this.http.get<IssuesResponseAPI>(
+      `/api/issues/search?componentKeys=${this.project.projectKey}&statuses=${status}&ps=${pageSize}&p=${page}`
+    )
 
-      if (response.status !== 200 || !response.data) {
-        return result
-      }
-
-      const {
-        data: { issues },
-      } = response
-
-      result.push(issues)
-      if (pageSize * page >= response.data.paging.total) {
-        return result
-      }
-
-      return await this.getIssues({ pageSize, page: page + 1, result })
-    } catch (err) {
-      throw new Error(
-        'Error getting project issues from SonarQube. Please make sure you provided the host and token inputs.'
-      )
+    if (response.status !== 200 || !response.data) {
+      return result
     }
-  }
 
-  public setSonarCert = (sonarqube) => {
-    var sslCertificate = require('get-ssl-certificate');
-    var Keytool = require('node-keytool');
-    var hostname = new URL(this.host).hostname;
-    console.log(hostname);
-    sslCertificate.get(hostname).then(function (certificate) {
-      console.log(certificate.pemEncoded);
-      console.log(process.env.JAVA_HOME+'/lib/security/cacerts');
-      var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
-      console.log(store);
-      store.importcert('sonar', '', undefined, certificate.pemEncoded, true, function (err, res) {
-        if (err) {
-          console.log(err);
-          console.log('ERROR: importcert (std)');
-        } else {
-          console.log(res);
-          console.log('importcert (std)');
-          const scannerCommand = sonarqube.getScannerCommand()
-          Promise.resolve(exec.exec(scannerCommand));
-        }
-      });
-    });
+    const {
+      data: { issues },
+    } = response
+
+    result.push(issues)
+    if (pageSize * page >= response.data.paging.total) {
+      return result
+    }
+
+    return await this.getIssues({ pageSize, page: page + 1, result })
   }
 
   public getScannerCommand = () =>
