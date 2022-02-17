@@ -135,7 +135,7 @@ async function run() {
       } else {
         console.log(res);
         console.log('importcert (std)');
-        Promise.resolve(exec.exec('keytool -list -keystore /usr/lib/jvm/java-11-openjdk/lib/security/cacerts | grep sonar'))
+        exec.exec('keytool -list -keystore /usr/lib/jvm/java-11-openjdk/lib/security/cacerts -alias sonar');
         __run();
       }
     });
