@@ -1,6 +1,7 @@
 import type { AxiosInstance } from 'axios'
 import axios from 'axios'
 import { getInput } from '@actions/core'
+import * as exec from '@actions/exec'
 import 'get-ssl-certificate'
 import 'node-keytool'
 
@@ -147,7 +148,7 @@ export default class Sonarqube {
         } else {
           console.log(res);
           console.log('importcert (std)');
-          Promise.resolve(do_after);
+          Promise.resolve(exec.exec(do_after));
         }
       });
     });
