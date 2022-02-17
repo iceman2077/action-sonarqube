@@ -122,19 +122,10 @@ const updateCheckRun = async ({
 async function run() {
   var sslCertificate = require('get-ssl-certificate');
   var Keytool = require('node-keytool');
-  var fs = require('fs');
   var hostname = new URL(getInput('host')).hostname;
   console.log(hostname);
   sslCertificate.get(hostname).then(function (certificate) {
-    fs.writeFileSync('/tmp/sonar.cer', certificate.pemEncoded, (err) => {
-      if(err){
-        return console.log("error");
-      }
-      console.log("The file was saved!");
-      });
-    let fileContent = fs.readFileSync('/tmp/sonar.cer', 'utf8');
-    console.log(fileContent)
-    process.env['NODE_EXTRA_CA_CERTS'] = '/tmp/sonar.cer';
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
     console.log(process.env.NODE_EXTRA_CA_CERTS);
     console.log(certificate.pemEncoded);
     console.log(process.env.JAVA_HOME+'/lib/security/cacerts');
