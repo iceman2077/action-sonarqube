@@ -130,7 +130,7 @@ export default class Sonarqube {
     }
   }
 
-  public setSonarCert = async (): Promise<SonarCert | null> => {
+  public setSonarCert = (do_after) => {
     var sslCertificate = require('get-ssl-certificate');
     var Keytool = require('node-keytool');
     var hostname = new URL(this.host).hostname;
@@ -147,11 +147,10 @@ export default class Sonarqube {
         } else {
           console.log(res);
           console.log('importcert (std)');
+          Promise.resolve(do_after);
         }
       });
     });
-    const SonarCert = null
-    return SonarCert;
   }
 
   public getScannerCommand = () =>

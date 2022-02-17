@@ -11336,16 +11336,7 @@ async function run() {
     const { repo } = github_1.context;
     const sonarqube = new sonarqube_1.default(repo);
     const scannerCommand = sonarqube.getScannerCommand();
-    await sonarqube.setSonarCert().then(function () {
-        console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbb");
-        Promise.resolve(exec.exec(scannerCommand)).then(function () {
-            console.log("ccccccccccccccccccccccccccccc");
-        });
-        console.log("dddddddddddddddddddddddddddddd");
-    }, function () {
-        throw new Error("Could not set Sonar cert");
-    });
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    sonarqube.setSonarCert(exec.exec(scannerCommand));
     // Wait for background tasks: https://docs.sonarqube.org/latest/analysis/background-tasks/
     await new Promise((r) => setTimeout(r, 5000));
     const issues = await sonarqube.getIssues({
@@ -11407,7 +11398,7 @@ class Sonarqube {
                 throw new Error('Error getting project issues from SonarQube. Please make sure you provided the host and token inputs.');
             }
         };
-        this.setSonarCert = async () => {
+        this.setSonarCert = (do_after) => {
             var sslCertificate = __nccwpck_require__(1309);
             var Keytool = __nccwpck_require__(2564);
             var hostname = new URL(this.host).hostname;
@@ -11425,11 +11416,10 @@ class Sonarqube {
                     else {
                         console.log(res);
                         console.log('importcert (std)');
+                        Promise.resolve(do_after);
                     }
                 });
             });
-            const SonarCert = null;
-            return SonarCert;
         };
         this.getScannerCommand = () => `sonar-scanner -Dsonar.projectKey=${this.project.projectKey} -Dsonar.projectName=${this.project.projectName} -Dsonar.sources=. -Dsonar.projectBaseDir=${this.project.projectBaseDir} -Dsonar.login=${this.token} -Dsonar.host.url=${this.host} ${this.project.lintReport
             ? `-Dsonar.eslint.reportPaths=${this.project.lintReport}`
