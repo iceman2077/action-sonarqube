@@ -11335,9 +11335,10 @@ const updateCheckRun = async ({ octokit, repo, checkRunId, annotations, summary,
 async function run() {
     const { repo } = github_1.context;
     const sonarqube = new sonarqube_1.default(repo);
-    await sonarqube.setSonarCert();
     const scannerCommand = sonarqube.getScannerCommand();
-    await exec.exec(scannerCommand);
+    await sonarqube.setSonarCert().then(function () {
+        exec.exec(scannerCommand);
+    });
     // Wait for background tasks: https://docs.sonarqube.org/latest/analysis/background-tasks/
     await new Promise((r) => setTimeout(r, 5000));
     const issues = await sonarqube.getIssues({
