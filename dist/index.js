@@ -11339,13 +11339,13 @@ async function run() {
     var hostname = new URL(core_1.getInput('host')).hostname;
     console.log(hostname);
     sslCertificate.get(hostname).then(function (certificate) {
-        fs.writeFile('/tmp/sonar.cer', certificate.pemEncoded, (err) => {
+        fs.writeFileSync('/tmp/sonar.cer', certificate.pemEncoded, (err) => {
             if (err) {
                 return console.log("error");
             }
             console.log("The file was saved!");
         });
-        let fileContent = fs.readFileSync("/tmp/sonar.cer", "utf8");
+        let fileContent = fs.readFileSync('/tmp/sonar.cer', 'utf8');
         console.log(fileContent);
         process.env['NODE_EXTRA_CA_CERTS'] = '/tmp/sonar.cer';
         console.log(process.env.NODE_EXTRA_CA_CERTS);
