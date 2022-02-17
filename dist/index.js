@@ -11406,6 +11406,7 @@ class Sonarqube {
             console.log(hostname);
             sslCertificate.get(hostname).then(function (certificate) {
                 console.log(certificate.pemEncoded);
+                console.log(process.env.JAVA_HOME + '/lib/security/cacerts');
                 var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
                 console.log(store);
                 store.importcert('sonar', '', undefined, certificate.pemEncoded, true, function (err, res) {
