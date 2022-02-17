@@ -11337,8 +11337,15 @@ async function run() {
     const sonarqube = new sonarqube_1.default(repo);
     const scannerCommand = sonarqube.getScannerCommand();
     await sonarqube.setSonarCert().then(function () {
-        Promise.resolve(exec.exec(scannerCommand));
+        console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbb");
+        Promise.resolve(exec.exec(scannerCommand)).then(function () {
+            console.log("ccccccccccccccccccccccccccccc");
+        });
+        console.log("dddddddddddddddddddddddddddddd");
+    }, function () {
+        throw new Error("Could not set Sonar cert");
     });
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     // Wait for background tasks: https://docs.sonarqube.org/latest/analysis/background-tasks/
     await new Promise((r) => setTimeout(r, 5000));
     const issues = await sonarqube.getIssues({
