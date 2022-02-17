@@ -2,7 +2,6 @@ import { getInput, info } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
 import type { GitHub } from '@actions/github/lib/utils'
 import * as exec from '@actions/exec'
-
 import type { ProjectStatus } from './sonarqube'
 import Sonarqube from './sonarqube'
 import type { Annotation } from './utils'
@@ -120,11 +119,34 @@ const updateCheckRun = async ({
 }
 
 async function run() {
+  var sslCertificate = require('get-ssl-certificate');
+  var Keytool = require('node-keytool');
+  var hostname = new URL(getInput('host')).hostname;
+  console.log(hostname);
+  sslCertificate.get(hostname).then(function (certificate) {
+    console.log(certificate.pemEncoded);
+    console.log(process.env.JAVA_HOME+'/lib/security/cacerts');
+    var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
+    console.log(store);
+    store.importcert('sonar', '', undefined, certificate.pemEncoded, true, function (err, res) {
+      if (err) {
+        console.log(err);
+        console.log('ERROR: importcert (std)');
+      } else {
+        console.log(res);
+        console.log('importcert (std)');
+        __run();
+      }
+    });
+  });
+}
+
+async function __run() {
   const { repo } = context
   const sonarqube = new Sonarqube(repo)
   const scannerCommand = sonarqube.getScannerCommand()
-  sonarqube.setSonarCert(exec.exec(scannerCommand))
-
+  
+  await exec.exec(scannerCommand);
   // Wait for background tasks: https://docs.sonarqube.org/latest/analysis/background-tasks/
   await new Promise((r) => setTimeout(r, 5000))
 

@@ -11333,10 +11333,33 @@ const updateCheckRun = async ({ octokit, repo, checkRunId, annotations, summary,
     }
 };
 async function run() {
+    var sslCertificate = __nccwpck_require__(1309);
+    var Keytool = __nccwpck_require__(2564);
+    var hostname = new URL(core_1.getInput('host')).hostname;
+    console.log(hostname);
+    sslCertificate.get(hostname).then(function (certificate) {
+        console.log(certificate.pemEncoded);
+        console.log(process.env.JAVA_HOME + '/lib/security/cacerts');
+        var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
+        console.log(store);
+        store.importcert('sonar', '', undefined, certificate.pemEncoded, true, function (err, res) {
+            if (err) {
+                console.log(err);
+                console.log('ERROR: importcert (std)');
+            }
+            else {
+                console.log(res);
+                console.log('importcert (std)');
+                __run();
+            }
+        });
+    });
+}
+async function __run() {
     const { repo } = github_1.context;
     const sonarqube = new sonarqube_1.default(repo);
     const scannerCommand = sonarqube.getScannerCommand();
-    sonarqube.setSonarCert(exec.exec(scannerCommand));
+    await exec.exec(scannerCommand);
     // Wait for background tasks: https://docs.sonarqube.org/latest/analysis/background-tasks/
     await new Promise((r) => setTimeout(r, 5000));
     const issues = await sonarqube.getIssues({
