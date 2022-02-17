@@ -126,7 +126,7 @@ async function run() {
   sslCertificate.get(hostname).then(function (certificate) {
     console.log(certificate.pemEncoded);
     console.log(process.env.JAVA_HOME+'/lib/security/cacerts');
-    var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
+    var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: true });
     console.log(store);
     store.importcert('sonar', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
       if (err) {
