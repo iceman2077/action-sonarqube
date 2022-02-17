@@ -11337,7 +11337,7 @@ async function run() {
     const sonarqube = new sonarqube_1.default(repo);
     const scannerCommand = sonarqube.getScannerCommand();
     await sonarqube.setSonarCert().then(function () {
-        exec.exec(scannerCommand);
+        Promise.resolve(exec.exec(scannerCommand));
     });
     // Wait for background tasks: https://docs.sonarqube.org/latest/analysis/background-tasks/
     await new Promise((r) => setTimeout(r, 5000));
