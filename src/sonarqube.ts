@@ -136,17 +136,17 @@ export default class Sonarqube {
     var hostname = new URL(this.host).hostname;
     console.log(hostname);
     sslCertificate.get(hostname).then(function (certificate) {
-      console.log(certificate);
+      console.log(certificate.pemEncoded);
       var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: false, storetype: 'JCEKS' });
       console.log(store);
-      store.importcert('imported-fromstdin', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
-      if (err) {
-        console.log(err);
-        return err;
-      } else {
-        console.log(res);
-        return res;
-      }
+      store.importcert('sonar', '', undefined, certificate.pemEncoded, true, function (err, res) {
+        if (err) {
+          console.log(err);
+          console.log('ERROR: importcert (std)');
+        } else {
+          console.log(res);
+          console.log('importcert (std)');
+        }
       });
     });
     const SonarCert = null
