@@ -1260,6 +1260,11 @@
   dependencies:
     "wrappy" "1"
 
+"openssl-nodejs@^1.0.5":
+  "integrity" "sha512-6+nxZBw96nK1WUk5yIjhv9NRjqtNTfklB508T64BG5TQ8fU1x1rJrc1I3iVW+31KjnYYYwInGTopYxFJa7wMqA=="
+  "resolved" "https://registry.npmjs.org/openssl-nodejs/-/openssl-nodejs-1.0.5.tgz"
+  "version" "1.0.5"
+
 "optionator@^0.9.1":
   "integrity" "sha512-74RlY5FCnhq4jRxVUPKDaRwrVNXMqsGsiW6AJw4XK8hmtm10wC0ypZBLw5IIp85NZMr91+qd1RvvENwg7jjRFw=="
   "resolved" "https://registry.npmjs.org/optionator/-/optionator-0.9.1.tgz"

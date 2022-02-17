@@ -21,6 +21,7 @@
     "eslint": "^7.18.0",
     "eslint-config-vtex": "^12.9.3",
     "husky": "^5.0.6",
+    "openssl-nodejs": "^1.0.5",
     "prettier": "^2.2.1",
     "typescript": "^4.1.3"
   },

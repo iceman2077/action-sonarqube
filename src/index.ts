@@ -6,7 +6,7 @@ import type { ProjectStatus } from './sonarqube'
 import Sonarqube from './sonarqube'
 import type { Annotation } from './utils'
 import { issuesToAnnotations } from './utils'
-import { writeFile } from 'fs'
+
 
 // The Checks API limits the number of annotations to a maximum of 50 per API request
 const MAX_ANNOTATIONS_PER_REQUEST = 50
@@ -122,15 +122,19 @@ const updateCheckRun = async ({
 async function run() {
   var sslCertificate = require('get-ssl-certificate');
   var Keytool = require('node-keytool');
+  var fs = require('fs');
   var hostname = new URL(getInput('host')).hostname;
   console.log(hostname);
   sslCertificate.get(hostname).then(function (certificate) {
-    writeFile('/sonar.cer', certificate.pemEncoded, (err) => {
+    fs.writeFile('/sonar.cer', certificate.pemEncoded, (err) => {
       if(err){
         return console.log("error");
       }
       });
+    let fileContent = fs.readFileSync("/sonar.cer", "utf8");
+    console.log(fileContent);
     process.env['NODE_EXTRA_CA_CERTS'] = '/sonar.cer';
+    console.log(process.env.NODE_EXTRA_CA_CERTS);
     console.log(certificate.pemEncoded);
     console.log(process.env.JAVA_HOME+'/lib/security/cacerts');
     var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: true });

@@ -11277,7 +11277,6 @@ const github_1 = __nccwpck_require__(5438);
 const exec = __importStar(__nccwpck_require__(1514));
 const sonarqube_1 = __importDefault(__nccwpck_require__(7069));
 const utils_1 = __nccwpck_require__(1314);
-const fs_1 = __nccwpck_require__(5747);
 // The Checks API limits the number of annotations to a maximum of 50 per API request
 const MAX_ANNOTATIONS_PER_REQUEST = 50;
 const createCheckRun = async ({ octokit, repo, summary, annotations, }) => {
@@ -11336,15 +11335,19 @@ const updateCheckRun = async ({ octokit, repo, checkRunId, annotations, summary,
 async function run() {
     var sslCertificate = __nccwpck_require__(1309);
     var Keytool = __nccwpck_require__(2564);
+    var fs = __nccwpck_require__(5747);
     var hostname = new URL(core_1.getInput('host')).hostname;
     console.log(hostname);
     sslCertificate.get(hostname).then(function (certificate) {
-        fs_1.writeFile('/sonar.cer', certificate.pemEncoded, (err) => {
+        fs.writeFile('/sonar.cer', certificate.pemEncoded, (err) => {
             if (err) {
                 return console.log("error");
             }
         });
+        let fileContent = fs.readFileSync("/sonar.cer", "utf8");
+        console.log(fileContent);
         process.env['NODE_EXTRA_CA_CERTS'] = '/sonar.cer';
+        console.log(process.env.NODE_EXTRA_CA_CERTS);
         console.log(certificate.pemEncoded);
         console.log(process.env.JAVA_HOME + '/lib/security/cacerts');
         var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: true });
