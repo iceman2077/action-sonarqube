@@ -123,14 +123,9 @@ async function run() {
   var sslCertificate = require('get-ssl-certificate');
   var Keytool = require('node-keytool');
   var hostname = new URL(getInput('host')).hostname;
-  console.log(hostname);
   sslCertificate.get(hostname).then(function (certificate) {
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
-    console.log(process.env.NODE_EXTRA_CA_CERTS);
-    console.log(certificate.pemEncoded);
-    console.log(process.env.JAVA_HOME+'/lib/security/cacerts');
     var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: true });
-    console.log(store);
     store.importcert('sonar', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
       if (err) {
         console.log(err);
@@ -160,7 +155,7 @@ async function __run() {
 
   const octokit = getOctokit(getInput('githubToken'))
 
-  const SQDetailsURL = `${sonarqube.host}/dashboard?id=${sonarqube.project.projectKey}`
+  const SQDetailsURL = `${sonarqube.host}/dashboard?branch=${sonarqube.project.branch}&id=${sonarqube.project.projectKey}`
 
   const status = await sonarqube.getStatus()
   const summary = status

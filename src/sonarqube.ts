@@ -73,6 +73,7 @@ export default class Sonarqube {
     projectBaseDir: string
     lintReport: string
     golangciLintReport: string
+    branch: string
     flags: string
   }
 
@@ -136,6 +137,10 @@ export default class Sonarqube {
         ? `-Dsonar.eslint.reportPaths=${this.project.lintReport}`
         : ''
     } ${
+      this.project.branch
+        ? `-Dsonar.branch.name=${this.project.branch}`
+        : ''
+    }${
       this.project.golangciLintReport
         ? `-Dsonar.go.golangci-lint.reportPaths=${this.project.golangciLintReport}`
         : ''
@@ -145,7 +150,7 @@ export default class Sonarqube {
 
   public getStatus = async (): Promise<ProjectStatus | null> => {
     const response = await this.http.get<ProjectStatusResponseAPI>(
-      `/api/qualitygates/project_status?projectKey=${this.project.projectKey}`
+      `/api/qualitygates/project_status?branch=${this.project.branch}&projectKey=${this.project.projectKey}`
     )
 
     if (response.status !== 200 || !response.data) {
@@ -169,6 +174,7 @@ export default class Sonarqube {
         : `${repo.owner}-${repo.repo}`,
       projectBaseDir: getInput('projectBaseDir'),
       lintReport: getInput('lintReport'),
+      branch: getInput('branch'),
       golangciLintReport: getInput('golangciLintReport'),
       flags: getInput('flags')
     },

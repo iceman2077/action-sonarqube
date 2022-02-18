@@ -25,6 +25,10 @@ inputs:
   lintReport:
     description: "Path to lint report json file. https://docs.sonarqube.org/pages/viewpage.action?pageId=11639183"
     required: false
+  branch: 
+    description: "Name of the branch that will be scanned"
+    required: false
+    default: "master"
   golangciLintReport:
     description: "Path to golangci-lint report xml file. https://docs.sonarqube.org/latest/analysis/external-issues/"
     required: false

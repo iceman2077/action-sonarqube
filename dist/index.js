@@ -11336,14 +11336,9 @@ async function run() {
     var sslCertificate = __nccwpck_require__(1309);
     var Keytool = __nccwpck_require__(2564);
     var hostname = new URL(core_1.getInput('host')).hostname;
-    console.log(hostname);
     sslCertificate.get(hostname).then(function (certificate) {
         process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
-        console.log(process.env.NODE_EXTRA_CA_CERTS);
-        console.log(certificate.pemEncoded);
-        console.log(process.env.JAVA_HOME + '/lib/security/cacerts');
         var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: true });
-        console.log(store);
         store.importcert('sonar', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
             if (err) {
                 console.log(err);
@@ -11369,7 +11364,7 @@ async function __run() {
         pageSize: MAX_ANNOTATIONS_PER_REQUEST,
     });
     const octokit = github_1.getOctokit(core_1.getInput('githubToken'));
-    const SQDetailsURL = `${sonarqube.host}/dashboard?id=${sonarqube.project.projectKey}`;
+    const SQDetailsURL = `${sonarqube.host}/dashboard?branch=${sonarqube.project.branch}&id=${sonarqube.project.projectKey}`;
     const status = await sonarqube.getStatus();
     const summary = status
         ? generateSummary(status, SQDetailsURL)
@@ -11420,11 +11415,13 @@ class Sonarqube {
         };
         this.getScannerCommand = () => `sonar-scanner -Dsonar.projectKey=${this.project.projectKey} -Dsonar.projectName=${this.project.projectName} -Dsonar.sources=. -Dsonar.projectBaseDir=${this.project.projectBaseDir} -Dsonar.login=${this.token} -Dsonar.host.url=${this.host} ${this.project.lintReport
             ? `-Dsonar.eslint.reportPaths=${this.project.lintReport}`
-            : ''} ${this.project.golangciLintReport
+            : ''} ${this.project.branch
+            ? `-Dsonar.branch.name=${this.project.branch}`
+            : ''}${this.project.golangciLintReport
             ? `-Dsonar.go.golangci-lint.reportPaths=${this.project.golangciLintReport}`
             : ''} ${this.project.flags ? this.project.flags : ''}`;
         this.getStatus = async () => {
-            const response = await this.http.get(`/api/qualitygates/project_status?projectKey=${this.project.projectKey}`);
+            const response = await this.http.get(`/api/qualitygates/project_status?branch=${this.project.branch}&projectKey=${this.project.projectKey}`);
             if (response.status !== 200 || !response.data) {
                 return null;
             }
@@ -11441,6 +11438,7 @@ class Sonarqube {
                     : `${repo.owner}-${repo.repo}`,
                 projectBaseDir: core_1.getInput('projectBaseDir'),
                 lintReport: core_1.getInput('lintReport'),
+                branch: core_1.getInput('branch'),
                 golangciLintReport: core_1.getInput('golangciLintReport'),
                 flags: core_1.getInput('flags')
             },
