@@ -11380,6 +11380,7 @@ async function __run() {
             summary,
         });
     });
+    core_1.setOutput("report_url", SQDetailsURL);
 }
 run();
 

@@ -1,4 +1,4 @@
-import { getInput, info } from '@actions/core'
+import { getInput, info, setOutput } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
 import type { GitHub } from '@actions/github/lib/utils'
 import * as exec from '@actions/exec'
@@ -175,6 +175,7 @@ async function __run() {
       summary,
     })
   })
+  setOutput("report_url", SQDetailsURL);
 }
 
 run()

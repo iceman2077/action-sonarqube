@@ -35,6 +35,9 @@ inputs:
   flags:
     description: "Any Sonarqube flags which will following the end of the command"
     required: false
+output:
+  report_url:
+    description: Sonar-scan report URL
 runs:
   using: 'docker'
   image: 'Dockerfile'
