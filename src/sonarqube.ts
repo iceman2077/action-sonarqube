@@ -1,8 +1,6 @@
 import type { AxiosInstance } from 'axios'
 import axios from 'axios'
 import { getInput } from '@actions/core'
-import 'get-ssl-certificate'
-import 'node-keytool'
 
 export interface Issue {
   key: string

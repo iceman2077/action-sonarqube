@@ -6,6 +6,8 @@ import type { ProjectStatus } from './sonarqube'
 import Sonarqube from './sonarqube'
 import type { Annotation } from './utils'
 import { issuesToAnnotations } from './utils'
+import 'get-ssl-certificate'
+import 'node-keytool'
 
 
 // The Checks API limits the number of annotations to a maximum of 50 per API request
@@ -123,8 +125,8 @@ async function run() {
   var sslCertificate = require('get-ssl-certificate');
   var Keytool = require('node-keytool');
   var hostname = new URL(getInput('host')).hostname;
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
   sslCertificate.get(hostname).then(function (certificate) {
-    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
     var store = Keytool(process.env.JAVA_HOME+'/lib/security/cacerts', 'changeit', { debug: true });
     store.importcert('sonar', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
       if (err) {

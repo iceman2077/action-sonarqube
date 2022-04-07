@@ -10708,6 +10708,8 @@ const github_1 = __nccwpck_require__(5438);
 const exec = __importStar(__nccwpck_require__(1514));
 const sonarqube_1 = __importDefault(__nccwpck_require__(7069));
 const utils_1 = __nccwpck_require__(1314);
+__nccwpck_require__(3575);
+__nccwpck_require__(9993);
 // The Checks API limits the number of annotations to a maximum of 50 per API request
 const MAX_ANNOTATIONS_PER_REQUEST = 50;
 const createCheckRun = async ({ octokit, repo, summary, annotations, }) => {
@@ -10767,8 +10769,8 @@ async function run() {
     var sslCertificate = __nccwpck_require__(3575);
     var Keytool = __nccwpck_require__(9993);
     var hostname = new URL(core_1.getInput('host')).hostname;
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
     sslCertificate.get(hostname).then(function (certificate) {
-        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
         var store = Keytool(process.env.JAVA_HOME + '/lib/security/cacerts', 'changeit', { debug: true });
         store.importcert('sonar', 'changeit', undefined, certificate.pemEncoded, true, function (err, res) {
             if (err) {
@@ -10829,8 +10831,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const axios_1 = __importDefault(__nccwpck_require__(6545));
 const core_1 = __nccwpck_require__(2186);
-__nccwpck_require__(3575);
-__nccwpck_require__(9993);
 class Sonarqube {
     constructor(repo) {
         this.getIssues = async ({ pageSize, page, status = 'OPEN', result = [], }) => {
