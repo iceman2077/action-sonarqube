@@ -163,7 +163,7 @@ async function __run() {
   const summary = status
     ? generateSummary(status, SQDetailsURL)
     : `See more details in [SonarQube](${SQDetailsURL})`
-
+  console.log(repo)
   const checkRunId = await createCheckRun({ octokit, repo, summary })
 
   issues.map(async (batch) => {
